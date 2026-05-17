@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Test Results";
+    
+    // Calculate percentage for coloring
+    double percentage = (double)ViewBag.Score / ViewBag.Total * 100;
+    string colorClass = percentage >= 75 ? "text-success" : (percentage >= 50 ? "text-warning" : "text-danger");
+    string iconClass = percentage >= 75 ? "fa-trophy" : (percentage >= 50 ? "fa-thumbs-up" : "fa-book-open-reader");
+}
+
+<div class="container my-5 d-flex justify-content-center">
+    <div class="card shadow border-0 text-center p-5 max-w-md-800 w-100 rounded-4">
+        
+        <h4 class="text-muted mb-4">Results for: <strong>@ViewBag.QuizTitle</strong></h4>
+
+        <div class="mb-4">
+            <i class="fa-solid @iconClass @colorClass mb-3" style="font-size: 5rem;"></i>
+            <h1 class="display-1 fw-bold @colorClass">@ViewBag.Score / @ViewBag.Total</h1>
+            <h3 class="text-muted">@percentage.ToString("0")%</h3>
+        </div>
+
+        <p class="fs-5 text-secondary mb-5">
+            @if (percentage >= 75) 
+            { 
+                @:Outstanding job! You really know your stuff.
+            } 
+            else if (percentage >= 50) 
+            { 
+                @:Good effort! A little more studying and you'll be an expert.
+            } 
+            else 
+            { 
+                @:Keep practicing! Review the flashcards and try again. 
+            }
+        </p>
+
+        <div class="d-flex justify-content-center gap-3">
+            <!-- Go back to the Quiz dashboard -->
+            <a asp-action="Index" asp-route-quizId="@ViewBag.QuizId" class="btn btn-secondary btn-lg px-4 fw-semibold">
+                <i class="fa-solid fa-arrow-left me-2"></i> Back to Dashboard
+            </a>
+            
+            <!-- Retake the test button -->
+            <a asp-action="TestQuiz" asp-route-quizId="@ViewBag.QuizId" class="btn btn-primary btn-lg px-4 fw-bold">
+                <i class="fa-solid fa-rotate-right me-2"></i> Retake Test
+            </a>
+        </div>      
+    </div>
+</div>

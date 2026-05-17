@@ -1,0 +1,32 @@
+﻿@model ReviewIT_FinalProject_IMDBSYS2.Models.Question
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1 class="fw-bold text-danger text-center">Deleting this Question</h1>
+<h3 class="fw-semibold text-danger text-center pb-2">Are you sure you want to set this question to <strong>Inactive</strong>?</h3>
+<div>
+    <dl class="row border border-danger border-2 rounded-3 p-3 shadow text-danger fs-5 fw-semibold">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.QuestionText)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.QuestionText)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.QuestionType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.QuestionType.QuestionTypeName)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <a asp-action="Index" asp-route-quizId="@Model.QuizId" class="fw-semibold btn btn-secondary">
+            <i class="fa-solid fa-angle-left text-light"></i> Back to List
+        </a>
+        <input type="hidden" asp-for="QuizId" />
+        <input type="submit" value="Delete" class="btn btn-danger fw-semibold" />
+    </form>
+</div>

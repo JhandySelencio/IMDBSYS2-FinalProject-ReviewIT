@@ -1,0 +1,166 @@
+﻿@model ReviewIT_FinalProject_IMDBSYS2.Models.Quiz
+
+@{
+    ViewData["Title"] = "Flashcards - " + Model.Title;
+}
+
+<style>
+    .flashcard-scene {
+        width: 100%;
+        max-width: 800px;
+        height: 400px;
+        margin: 0 auto;
+        perspective: 1000px;
+        cursor: pointer;
+    }
+
+    .flashcard-inner {
+        width: 100%;
+        height: 100%;
+        transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+        transform-style: preserve-3d;
+        position: relative;
+    }
+
+        /* This class is toggled by JavaScript to flip the card */
+        .flashcard-inner.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+    .flashcard-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        -webkit-backface-visibility: hidden; /* Safari support */
+        backface-visibility: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        border-radius: 1rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .flashcard-front {
+        background-color: #ffffff;
+        border: 2px solid #e0e0e0;
+    }
+
+    .flashcard-back {
+        background-color: #f8f9fa;
+        border: 3px solid #198754; /* Success green border */
+        transform: rotateY(180deg); /* Start flipped backwards */
+    }
+
+    .carousel-control-prev, .carousel-control-next {
+        width: 10%;
+        filter: invert(100%); 
+    }
+</style>
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a asp-action="Index" asp-route-quizId="@Model.QuizId" class="btn btn-secondary btn-sm mb-2 fw-semibold fs-6">
+                <i class="fa-solid fa-arrow-left me-1"></i> Exit Flashcards
+            </a>
+            <h2 class="fw-bold text-primary mb-0">@Model.Title <span class="text-muted fs-5 fw-normal">| Study Mode</span></h2>
+        </div>
+    </div>
+
+    <!-- Bootstrap Carousel -->
+    <div id="flashcardCarousel" class="carousel slide" data-bs-touch="true" data-bs-interval="false">
+
+        <!-- Carousel Indicators (Dots at bottom) -->
+        <div class="carousel-indicators mb-n4" style="filter: invert(100%);">
+            @{
+                int indicatorIndex = 0;
+            }
+            @foreach (var q in Model.Questions)
+            {
+                <button type="button" data-bs-target="#flashcardCarousel" data-bs-slide-to="@indicatorIndex" class="@(indicatorIndex == 0 ? "active" : "")" aria-current="true"></button>
+                indicatorIndex++;
+            }
+        </div>
+
+        <!-- Carousel Cards -->
+        <div class="carousel-inner pb-5">
+            @{
+                int activeIndex = 0;
+            }
+            @foreach (var question in Model.Questions)
+            {
+                <div class="carousel-item @(activeIndex == 0 ? "active" : "")">
+
+                    <!-- The 3D Card Scene -->
+                    <div class="flashcard-scene" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+
+                            <!-- Front of Card: The Question -->
+                            <div class="flashcard-face flashcard-front">
+                                <span class="badge bg-secondary mb-3">Question @(activeIndex + 1) of @Model.Questions.Count</span>
+                                <h3 class="fw-bold text-dark">@question.QuestionText</h3>
+                            </div>
+
+                            <!-- Back of Card: The Correct Answer -->
+                            <div class="flashcard-face flashcard-back">
+                                <span class="badge bg-success mb-3"><i class="fa-solid fa-check"></i> Correct Answer</span>
+
+                                @{
+                                    var correctChoices = question.Choices.Where(c => c.IsCorrect == true).ToList();
+                                }
+
+                                @if (correctChoices.Any())
+                                {
+                                    foreach (var choice in correctChoices)
+                                    {
+                                        <h2 class="fw-bold text-success">@choice.ChoiceText</h2>
+                                    }
+                                }
+                                else
+                                {
+                                    <h4 class="text-muted fst-italic">No correct answer assigned yet.</h4>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                activeIndex++;
+            }
+        </div>
+
+        <!-- Carousel Navigation Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#flashcardCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#flashcardCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // 1. Function to handle the physical click-to-flip animation
+        function flipCard(sceneElement) {
+            const innerCard = sceneElement.querySelector('.flashcard-inner');
+            innerCard.classList.toggle('is-flipped');
+        }
+
+        // 2. Automatically flip cards back to the front when moving to the next/prev question
+        const myCarousel = document.getElementById('flashcardCarousel')
+        myCarousel.addEventListener('slide.bs.carousel', function () {
+            // Find all cards that are currently flipped and reset them
+            const flippedCards = document.querySelectorAll('.flashcard-inner.is-flipped');
+            flippedCards.forEach(card => {
+                card.classList.remove('is-flipped');
+            });
+        });
+    </script>
+}

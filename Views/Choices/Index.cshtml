@@ -1,0 +1,59 @@
+﻿@model IEnumerable<ReviewIT_FinalProject_IMDBSYS2.Models.Choice>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 class="fw-bold text-primary text-center pb-2">Manage Choices</h1>
+
+@if (ViewBag.QuestionText != null)
+{
+    <div>
+        <h4 class="fw-bold text-primary">Question:</h4>
+        <h1 class="fw-bold">@ViewBag.QuestionText</h1>
+        <hr />
+    </div>
+    <p>
+        <a asp-controller="Questions" asp-action="Index" asp-route-quizId="@ViewBag.QuizId" class="btn btn-secondary fw-semibold text-end">
+            <i class="fa-solid fa-angle-left text-light"></i> Return To Questions
+        </a>
+    </p>
+}
+<table class="table fs-6 fw-semibold">
+    <thead>
+        <tr class="table table-success">
+            <th>
+                @Html.DisplayNameFor(model => model.ChoiceText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsCorrect)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ChoiceText)
+            </td>
+            <td>
+                    @if (item.IsCorrect)
+                    {
+                        <span class="badge bg-success" style="font-size: 0.9em;">Correct Answer</span>
+                    }
+                    else
+                    {
+                        <form asp-action="SetAsCorrect" asp-route-id="@item.ChoiceId" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-success">Mark as Correct</button>
+                        </form>
+                    }
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ChoiceId" class="btn btn-primary">Edit</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

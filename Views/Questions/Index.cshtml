@@ -1,0 +1,86 @@
+﻿@model IEnumerable<ReviewIT_FinalProject_IMDBSYS2.Models.Question>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 class="fw-bold text-primary text-center pb-2">Manage Questions</h1>
+
+@if(ViewBag.QuizTitle != null){
+    <div>
+        <span class="badge bg-info px-3 py-2 mb-2 text-dark fs-6">
+            <i class="fa-solid fa-tags me-1"></i>
+            @ViewBag.CategoryType</span>
+        <h1 class="fw-bold">@ViewBag.QuizTitle</h1>  
+        <hr />
+    </div>
+    <div class="d-flex justify-content-between">
+        <p>
+            <a asp-controller="Quizs" asp-action="Index" class="btn btn-secondary fw-semibold text-end">
+                <i class="fa-solid fa-angle-left text-light"></i> Return To Quiz
+            </a>
+        </p>
+        <p> 
+            <a asp-action="Create" asp-route-quizId="@ViewBag.QuizId" class="btn btn-success fw-bold">
+                Create New Question <i class="fa-solid fa-plus text-light"></i>
+            </a>
+        </p>
+    </div>
+}
+<table class="table fs-6 fw-semibold">
+    <thead>
+        <tr class="table table-success ">
+            <th>
+                @Html.DisplayNameFor(model => model.QuestionText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QuestionType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td style="padding-left: 20px; max-width: 700px;">
+                @Html.DisplayFor(modelItem => item.QuestionText)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuestionType.QuestionTypeName)
+            </td>
+            <td>
+                    @if (item.Status.StatusId == 1)
+                    {
+                        <span class="badge text-bg-success">
+                            @Html.DisplayFor(modelItem => item.Status.StatusType)
+                        </span>
+                    }
+                    else if (item.Status.StatusId == 2)
+                    {
+                        <span class="badge text-bg-danger">
+                            @Html.DisplayFor(modelItem => item.Status.StatusType)
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge text-bg-warning">
+                            @Html.DisplayFor(modelItem => item.Status.StatusType)
+                        </span>
+                    }
+            </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.QuestionId" class="btn btn-primary fw-semibold">Edit</a>
+
+                    @if (item.Status.StatusId != 2)
+                    {
+                        <a asp-controller="Choices" asp-action="Index" asp-route-questionId="@item.QuestionId" class="btn btn-success fw-semibold">View</a>
+                        <a asp-action="Delete" asp-route-id="@item.QuestionId" class="btn btn-danger fw-semibold">Delete</a>
+                    }
+                </td>
+        </tr>
+}
+    </tbody>
+</table>
